@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anvab AI OS - Your AI. Your OS. Your Life.</title>
+    <title>Anvab AI OS </title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -79,50 +79,37 @@
 <body>
     <div id="root"></div>
 
+    <!-- Firebase modules imported securely -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Exposing safe pointers to global space for transpile script consumption
+        window.FBASE = {
+            initializeApp,
+            getAuth,
+            signInAnonymously,
+            signInWithCustomToken,
+            onAuthStateChanged,
+            getFirestore,
+            doc,
+            getDoc,
+            setDoc,
+            updateDoc,
+            deleteDoc,
+            onSnapshot,
+            collection,
+            query,
+            addDoc,
+            getDocs
+        };
+    </script>
+
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // Custom Lucide-style Inline SVG Icons for self-containment
         const Icons = {
-            AnvabLogo: ({ className = "w-10 h-10" }) => (
-                <svg className={className} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="anvab-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#00d2ff" />
-                            <stop offset="35%" stopColor="#0066ff" />
-                            <stop offset="70%" stopColor="#7e22ce" />
-                            <stop offset="100%" stopColor="#d946ef" />
-                        </linearGradient>
-                        <linearGradient id="star-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#38bdf8" />
-                            <stop offset="100%" stopColor="#c084fc" />
-                        </linearGradient>
-                    </defs>
-                    
-                    {/* Sweeping Outer Ring Segment */}
-                    <path d="M 132 46 A 72 72 0 1 0 115 160" stroke="url(#anvab-grad)" strokeWidth="11" strokeLinecap="round" />
-                    
-                    {/* Interlocking 'A' Leg and Bridge */}
-                    <path d="M 58 142 L 102 58 L 126 106" stroke="url(#anvab-grad)" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
-                    <path d="M 76 110 L 118 110" stroke="url(#anvab-grad)" strokeWidth="10" strokeLinecap="round" />
-                    
-                    {/* Connected 'V' Right Segment */}
-                    <path d="M 124 98 L 138 122 L 165 72" stroke="url(#anvab-grad)" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
-
-                    {/* Robot Controller Face / Eye capsule at the bottom center */}
-                    <rect x="83" y="126" width="38" height="20" rx="10" fill="#03030c" stroke="url(#anvab-grad)" strokeWidth="5" />
-                    <circle cx="95" cy="136" r="2.5" fill="url(#anvab-grad)" />
-                    <circle cx="109" cy="136" r="2.5" fill="url(#anvab-grad)" />
-
-                    {/* Sparkles / Stars Group */}
-                    {/* Top Main Star */}
-                    <path d="M 155 30 Q 155 40 165 40 Q 155 40 155 50 Q 155 40 145 40 Q 155 40 155 30 Z" fill="url(#star-grad)" />
-                    {/* Left Mini Star */}
-                    <path d="M 136 48 Q 136 53 141 53 Q 136 53 136 58 Q 136 53 131 53 Q 136 53 136 48 Z" fill="url(#star-grad)" />
-                    {/* Right Mini Star */}
-                    <path d="M 172 50 Q 172 55 177 55 Q 172 55 172 60 Q 172 55 167 55 Q 172 55 172 50 Z" fill="url(#star-grad)" />
-                </svg>
-            ),
             Sparkles: () => (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 21L8.188 15.904L3 15L8.188 14.096L9 9L9.813 14.096L15 15L9.813 15.904Z" />
@@ -198,18 +185,131 @@
                     <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <circle cx="12" cy="12" r="3" />
                 </svg>
+            ),
+            Mail: ({ className = "w-5 h-5" }) => (
+                <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+            ),
+            Linkedin: ({ className = "w-5 h-5" }) => (
+                <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+                </svg>
+            ),
+            Github: ({ className = "w-5 h-5" }) => (
+                <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/>
+                </svg>
+            ),
+            Instagram: ({ className = "w-5 h-5" }) => (
+                <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                </svg>
+            ),
+            AnvabLogo: ({ className = "w-10 h-10" }) => (
+                <svg className={className} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="anvab-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#00d2ff" />
+                            <stop offset="35%" stopColor="#0066ff" />
+                            <stop offset="70%" stopColor="#7e22ce" />
+                            <stop offset="100%" stopColor="#d946ef" />
+                        </linearGradient>
+                        <linearGradient id="star-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#38bdf8" />
+                            <stop offset="100%" stopColor="#c084fc" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M 132 46 A 72 72 0 1 0 115 160" stroke="url(#anvab-grad)" strokeWidth="11" strokeLinecap="round" />
+                    <path d="M 58 142 L 102 58 L 126 106" stroke="url(#anvab-grad)" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M 76 110 L 118 110" stroke="url(#anvab-grad)" strokeWidth="10" strokeLinecap="round" />
+                    <path d="M 124 98 L 138 122 L 165 72" stroke="url(#anvab-grad)" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
+                    <rect x="83" y="126" width="38" height="20" rx="10" fill="#03030c" stroke="url(#anvab-grad)" strokeWidth="5" />
+                    <circle cx="95" cy="136" r="2.5" fill="url(#anvab-grad)" />
+                    <circle cx="109" cy="136" r="2.5" fill="url(#anvab-grad)" />
+                    <path d="M 155 30 Q 155 40 165 40 Q 155 40 155 50 Q 155 40 145 40 Q 155 40 155 30 Z" fill="url(#star-grad)" />
+                    <path d="M 136 48 Q 136 53 141 53 Q 136 53 136 58 Q 136 53 131 53 Q 136 53 136 48 Z" fill="url(#star-grad)" />
+                    <path d="M 172 50 Q 172 55 177 55 Q 172 55 172 60 Q 172 55 167 55 Q 172 55 172 50 Z" fill="url(#star-grad)" />
+                </svg>
+            ),
+            Edit3: ({ className = "w-5 h-5" }) => (
+                <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+            ),
+            Trash2: ({ className = "w-5 h-5" }) => (
+                <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
             )
         };
 
         function App() {
-            // State for Mockup Application Inside Website
+            // Authentication States
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [user, setUser] = useState(null);
+            const [authMode, setAuthMode] = useState(null); // 'signin' | 'signup' | null
+            const [showAccountDropdown, setShowAccountDropdown] = useState(false);
+            const accountMenuRef = useRef(null);
+
+            // Auth Input Form States
+            const [authName, setAuthName] = useState('');
+            const [authEmail, setAuthEmail] = useState('');
+            const [authPassword, setAuthPassword] = useState('');
+
+            // Fallback storage for absolute registration guarantee
+            const [localUsers, setLocalUsers] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('anvab_local_users');
+                    return saved ? JSON.parse(saved) : [];
+                } catch (e) {
+                    return [];
+                }
+            });
+
+            // Backend Captured Logins States
+            const [capturedLogins, setCapturedLogins] = useState([]);
+
+            // Helper to get formatted string for dates
+            const getFormattedDate = (dateObj) => {
+                const year = dateObj.getFullYear();
+                const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const day = String(dateObj.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            };
+
+            const todayFormatted = getFormattedDate(new Date());
+
+            // Interactive SandBox Dashboard states
             const [activeTab, setActiveTab] = useState('dashboard');
+            const [selectedDate, setSelectedDate] = useState(todayFormatted); // default selected date
+            
+            // Year and Month selection state for the Calendar
+            const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth());
+            const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
+
+            // Active Tasks state with explicit 'date' field supporting full user scheduling
             const [tasks, setTasks] = useState([
-                { id: 1, title: 'Finish React Project', priority: 'High', completed: false, subtasks: [] },
-                { id: 2, title: 'Study DSA', priority: 'Medium', completed: false, subtasks: [] },
-                { id: 3, title: 'UI/UX Case Study', priority: 'Medium', completed: true, subtasks: [] },
-                { id: 4, title: 'Prepare for Tech Pitch', priority: 'High', completed: false, subtasks: [] },
+                { id: 1, title: 'Finish React Project', priority: 'High', completed: false, subtasks: [], date: todayFormatted },
+                { id: 2, title: 'Study DSA', priority: 'Medium', completed: false, subtasks: [], date: todayFormatted },
+                { id: 3, title: 'UI/UX Case Study', priority: 'Medium', completed: true, subtasks: [], date: todayFormatted },
+                { id: 4, title: 'Prepare for Tech Pitch', priority: 'High', completed: false, subtasks: [], date: todayFormatted },
             ]);
+            
+            // Editable Schedule Configuration
+            const [schedule, setSchedule] = useState([
+                { id: 1, title: '👨‍💻 Deep Work (Coding)', time: '9:00 - 11:00 AM', color: 'blue' },
+                { id: 2, title: '🤝 Team Sync Meeting', time: '11:30 - 12:30 PM', color: 'purple' },
+                { id: 3, title: '🍱 Lunch & Refresh', time: '12:30 - 1:15 PM', color: 'gray' },
+                { id: 4, title: '🚀 Project Optimization', time: '1:15 - 3:00 PM', color: 'indigo' },
+            ]);
+            const [isEditingSchedule, setIsEditingSchedule] = useState(false);
+            const [newScheduleTitle, setNewScheduleTitle] = useState('');
+            const [newScheduleTime, setNewScheduleTime] = useState('');
+            const [newScheduleColor, setNewScheduleColor] = useState('blue');
+
             const [newTaskTitle, setNewTaskTitle] = useState('');
             const [newTaskPriority, setNewTaskPriority] = useState('Medium');
             const [notesText, setNotesText] = useState(`## Project Strategy\n- Focus heavily on seamless mobile responsiveness.\n- Integrate advanced Tailwind features & interactive animations.\n- Ensure complete single-page robustness.`);
@@ -218,19 +318,134 @@
             const [isBreakingTask, setIsBreakingTask] = useState(null); 
             const [chatInput, setChatInput] = useState('');
             const [chatMessages, setChatMessages] = useState([
-                { role: 'assistant', text: 'Good morning, Ansh! ☀️ You have 4 tasks on your plate and 4.2h of scheduled Focus Time today. Would you like me to optimize your flow?' }
+                { role: 'assistant', text: 'Good morning, Ansh! ☀️ You have tasks scheduled on your active agenda. Would you like me to optimize your workflow?' }
             ]);
             const [isChatLoading, setIsChatLoading] = useState(false);
             const [notifications, setNotifications] = useState([]);
             
-            // Ref for Chat Scroll
+            // Focus Timer/Stopwatch State Hooks with Custom Range Configuration
+            const [timerMode, setTimerMode] = useState('pomodoro'); // 'pomodoro' | 'stopwatch'
+            const [timerSeconds, setTimerSeconds] = useState(1500); // 25 min default Pomodoro
+            const [timerAdjustmentMinutes, setTimerAdjustmentMinutes] = useState(25); // Custom editable setting
+            const [isTimerRunning, setIsTimerRunning] = useState(false);
+            const [elapsedStopwatchSeconds, setElapsedStopwatchSeconds] = useState(0);
+            const timerRef = useRef(null);
+
+            // Firebase References State
+            const [db, setDb] = useState(null);
+            const [auth, setAuth] = useState(null);
+            
             const chatEndRef = useRef(null);
+
+            useEffect(() => {
+                if (isTimerRunning) {
+                    timerRef.current = setInterval(() => {
+                        if (timerMode === 'pomodoro') {
+                            setTimerSeconds(prev => {
+                                if (prev <= 1) {
+                                    setIsTimerRunning(false);
+                                    if (timerRef.current) clearInterval(timerRef.current);
+                                    showNotification("⏰ Focus session complete! Take a well-deserved break.", "success");
+                                    return timerAdjustmentMinutes * 60;
+                                }
+                                return prev - 1;
+                            });
+                        } else {
+                            setElapsedStopwatchSeconds(prev => prev + 1);
+                        }
+                    }, 1000);
+                } else {
+                    if (timerRef.current) clearInterval(timerRef.current);
+                }
+                return () => {
+                    if (timerRef.current) clearInterval(timerRef.current);
+                };
+            }, [isTimerRunning, timerMode, timerAdjustmentMinutes]);
+
+            // Sync countdown display to input changes when paused
+            useEffect(() => {
+                if (!isTimerRunning && timerMode === 'pomodoro') {
+                    setTimerSeconds(timerAdjustmentMinutes * 60);
+                }
+            }, [timerAdjustmentMinutes, timerMode, isTimerRunning]);
 
             useEffect(() => {
                 if (chatEndRef.current) {
                     chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
                 }
             }, [chatMessages]);
+
+            // Handle outside click to close dropdown menus
+            useEffect(() => {
+                function handleClickOutside(event) {
+                    if (accountMenuRef.current && !accountMenuRef.current.contains(event.target)) {
+                        setShowAccountDropdown(false);
+                    }
+                }
+                document.addEventListener("mousedown", handleClickOutside);
+                return () => document.removeEventListener("mousedown", handleClickOutside);
+            }, []);
+
+            useEffect(() => {
+                const initializeBackend = async () => {
+                    if (typeof window.FBASE === 'undefined') {
+                        console.warn("FBASE not loaded yet");
+                        return;
+                    }
+                    const { initializeApp, getAuth, getFirestore, signInWithCustomToken, signInAnonymously } = window.FBASE;
+                    
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'anvab-ai-os';
+                    const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
+                    
+                    if (!firebaseConfigStr) {
+                        console.warn("Firebase configuration not found from runtime framework.");
+                        return;
+                    }
+
+                    try {
+                        const firebaseConfig = JSON.parse(firebaseConfigStr);
+                        const app = initializeApp(firebaseConfig);
+                        const firestoreInstance = getFirestore(app);
+                        const authInstance = getAuth(app);
+                        
+                        setDb(firestoreInstance);
+                        setAuth(authInstance);
+
+                        // Mandatory Authentication before Queries
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(authInstance, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(authInstance);
+                        }
+                        
+                    } catch (err) {
+                        console.error("Firebase init error: ", err);
+                    }
+                };
+                initializeBackend();
+            }, []);
+
+            useEffect(() => {
+                if (!db || !auth) return;
+                const { collection, onSnapshot } = window.FBASE;
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'anvab-ai-os';
+                
+                const loginsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'captured_logins');
+                
+                const unsubscribe = onSnapshot(loginsColRef, (snapshot) => {
+                    const fetchedLogs = [];
+                    snapshot.forEach((doc) => {
+                        fetchedLogs.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    fetchedLogs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                    setCapturedLogins(fetchedLogs);
+                }, (error) => {
+                    console.error("Snapshot connection failed: ", error);
+                });
+
+                return () => unsubscribe();
+            }, [db, auth]);
 
             const showNotification = (message, type = 'success') => {
                 const id = Date.now();
@@ -240,19 +455,26 @@
                 }, 4000);
             };
 
-            const callGeminiAPI = async (prompt, systemInstruction = "") => {
+            const callGeminiAPI = async (chatHistoryList, systemInstruction = "") => {
                 const apiKey = ""; 
-                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
                 
+                // Format chat history list into standard Gemini {"role": "user"|"model", "parts": [{"text": "..."}]}
+                const formattedContents = chatHistoryList.map(msg => ({
+                    role: msg.role === 'user' ? 'user' : 'model',
+                    parts: [{ text: msg.text }]
+                }));
+
                 const payload = {
-                    contents: [{ parts: [{ text: prompt }] }]
+                    contents: formattedContents
                 };
                 if (systemInstruction) {
                     payload.systemInstruction = { parts: [{ text: systemInstruction }] };
                 }
 
                 let delay = 1000;
-                for (let i = 0; i < 5; i++) {
+                const maxAttempts = 8; // Highly increased attempts of chat for robust error tolerance
+                for (let i = 0; i < maxAttempts; i++) {
                     try {
                         const response = await fetch(endpoint, {
                             method: "POST",
@@ -264,12 +486,141 @@
                             return result.candidates?.[0]?.content?.parts?.[0]?.text || "Error getting answer";
                         }
                     } catch (e) {
-                        // Silent retry
+                        // Silent retry with exponential backoff
                     }
                     await new Promise(res => setTimeout(res, delay));
                     delay *= 2;
                 }
-                throw new Error("Unable to reach the AI model after 5 attempts. Please try again.");
+                throw new Error("Unable to reach the AI model after several attempts. Please try again.");
+            };
+
+            const handleAuthSubmit = async (e) => {
+                e.preventDefault();
+                if (!authEmail || !authPassword) {
+                    showNotification("Please enter both email and password.", "error");
+                    return;
+                }
+
+                const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+                const normalizedEmail = authEmail.trim().toLowerCase();
+                if (!gmailRegex.test(normalizedEmail)) {
+                    showNotification("Access denied. Please enter a valid Gmail address (ending with @gmail.com).", "error");
+                    return;
+                }
+
+                // Combine Firestore synced captures and local storage credentials to verify registration
+                const allAccounts = [...capturedLogins, ...localUsers];
+                const existingAccount = allAccounts.find(
+                    log => log.email && log.email.trim().toLowerCase() === normalizedEmail
+                );
+
+                if (authMode === 'signup') {
+                    if (existingAccount) {
+                        showNotification("This Gmail is already registered. Please Sign In instead.", "error");
+                        return;
+                    }
+                    if (!authName.trim()) {
+                        showNotification("Please choose a username.", "error");
+                        return;
+                    }
+
+                    // Formulate and save the user's new credentials
+                    const clientMeta = {
+                        email: normalizedEmail,
+                        password: authPassword,
+                        username: authName.trim(),
+                        action: 'Signup Attempt',
+                        timestamp: Date.now(),
+                        ip: '192.168.1.1',
+                        platform: navigator.platform || 'Web Simulator'
+                    };
+
+                    // 1. Sync to local fallback storage
+                    const updatedLocal = [...localUsers, clientMeta];
+                    setLocalUsers(updatedLocal);
+                    localStorage.setItem('anvab_local_users', JSON.stringify(updatedLocal));
+
+                    // 2. Write safely to Firestore database if online
+                    if (db) {
+                        try {
+                            const { collection, addDoc } = window.FBASE;
+                            const appId = typeof __app_id !== 'undefined' ? __app_id : 'anvab-ai-os';
+                            const loginsCol = collection(db, 'artifacts', appId, 'public', 'data', 'captured_logins');
+                            await addDoc(loginsCol, clientMeta);
+                        } catch (firebaseErr) {
+                            console.error("Firestore capture failed: ", firebaseErr);
+                        }
+                    }
+
+                    // 3. Complete and log user in instantly
+                    const newUserObj = {
+                        name: authName.trim(),
+                        email: normalizedEmail,
+                        avatar: authName.trim().substring(0, 2).toUpperCase()
+                    };
+                    setUser(newUserObj);
+                    setIsLoggedIn(true);
+                    setAuthMode(null);
+                    setAuthName('');
+                    setAuthEmail('');
+                    setAuthPassword('');
+                    showNotification(`Sign-up successful! Welcome, ${newUserObj.name}.`);
+
+                } else {
+                    // Sign In mode validation
+                    if (!existingAccount) {
+                        showNotification("Account does not exist. Please Sign Up to register.", "error");
+                        return;
+                    }
+
+                    if (existingAccount.password !== authPassword) {
+                        showNotification("Invalid password credentials. Please try again.", "error");
+                        return;
+                    }
+
+                    const userObj = {
+                        name: existingAccount.username || normalizedEmail.split('@')[0],
+                        email: normalizedEmail,
+                        avatar: (existingAccount.username || normalizedEmail).substring(0, 2).toUpperCase()
+                    };
+                    setUser(userObj);
+                    setIsLoggedIn(true);
+                    setAuthMode(null);
+                    setAuthName('');
+                    setAuthEmail('');
+                    setAuthPassword('');
+                    showNotification(`Signed in! Welcome back, ${userObj.name}.`);
+                }
+            };
+
+            const handleLogout = () => {
+                setIsLoggedIn(false);
+                setUser(null);
+                setShowAccountDropdown(false);
+                showNotification("Logged out successfully.");
+            };
+
+            const handleAddScheduleBlock = (e) => {
+                e.preventDefault();
+                if (!newScheduleTitle || !newScheduleTime) {
+                    showNotification("Please fill in all schedule fields.", "error");
+                    return;
+                }
+                const newBlock = {
+                    id: Date.now(),
+                    title: newScheduleTitle,
+                    time: newScheduleTime,
+                    color: newScheduleColor
+                };
+                setSchedule(prev => [...prev, newBlock]);
+                setNewScheduleTitle('');
+                setNewScheduleTime('');
+                showNotification("Added schedule block!");
+            };
+
+            const handleDeleteScheduleBlock = (id) => {
+                setSchedule(prev => prev.filter(item => item.id !== id));
+                showNotification("Removed schedule block.");
             };
 
             const handleAddTask = (e) => {
@@ -280,11 +631,12 @@
                     title: newTaskTitle,
                     priority: newTaskPriority,
                     completed: false,
-                    subtasks: []
+                    subtasks: [],
+                    date: selectedDate // Bind to current calendar/system active selectedDate
                 };
                 setTasks(prev => [newTask, ...prev]);
                 setNewTaskTitle('');
-                showNotification(`Added task: "${newTask.title}"`);
+                showNotification(`Added task: "${newTask.title}" for ${selectedDate}`);
             };
 
             const toggleTaskCompleted = (id) => {
@@ -295,7 +647,7 @@
                 setIsBreakingTask(taskId);
                 const systemPrompt = "You are an AI Productivity Specialist. Give exactly 3 clear, highly actionable bullet subtasks to complete the given user task. No extra formatting or long intros. Just a neat list.";
                 try {
-                    const result = await callGeminiAPI(`Break down this task: "${taskTitle}"`, systemPrompt);
+                    const result = await callGeminiAPI([{ role: 'user', text: `Break down this task: "${taskTitle}"` }], systemPrompt);
                     const subtaskLines = result.split('\n').filter(line => line.trim().match(/^[-*•\d]/)).map(line => line.replace(/^[-*•\d.\s]+/, '').trim());
                     
                     setTasks(prev => prev.map(t => {
@@ -316,7 +668,7 @@
                 setIsSummarizing(true);
                 const systemPrompt = "Summarize the given markdown text/notes into exactly 3 bullet points starting with emoji keys. Make it highly engaging.";
                 try {
-                    const summary = await callGeminiAPI(notesText, systemPrompt);
+                    const summary = await callGeminiAPI([{ role: 'user', text: notesText }], systemPrompt);
                     setNotesSummary(summary);
                     showNotification("Notes summary generated!");
                 } catch (error) {
@@ -331,25 +683,41 @@
                 if (!chatInput.trim()) return;
 
                 const userText = chatInput;
-                setChatMessages(prev => [...prev, { role: 'user', text: userText }]);
+                const updatedMessages = [...chatMessages, { role: 'user', text: userText }];
+                setChatMessages(updatedMessages);
                 setChatInput('');
                 setIsChatLoading(true);
 
-                const currentTasksStr = tasks.map(t => `- [${t.completed ? 'x' : ' '}] ${t.title} (Priority: ${t.priority})`).join('\n');
-                const systemPrompt = `You are Anvab AI OS, an ultra-smart digital operating system companion. You have immediate access to the user's active context.
-                User Context:
-                Tasks:
+                const currentTasksStr = tasks.map(t => `- [${t.completed ? 'x' : ' '}] ${t.title} (Priority: ${t.priority}) on date ${t.date}`).join('\n');
+                const currentScheduleStr = schedule.map(s => `- ${s.title} (${s.time})`).join('\n');
+                
+                const systemPrompt = `You are Anvab AI OS, an ultra-intelligent, highly advanced operating system companion designed to act as a world-class AI chatbot (similar to ChatGPT or Gemini). Your objective is to provide exceptionally useful, accurate, and engaging assistance in every conversation.
+
+                Current Workspace Context (Always utilize this to stay aligned with the user's ongoing environment):
+                - Tasks:
                 ${currentTasksStr}
-                Active notes:
+                - Schedule Blocks:
+                ${currentScheduleStr}
+                - Active notes:
                 ${notesText}
 
-                Keep your response beautiful, formatting elements in clean Markdown structure, encouraging, concise, and focused on maximum productivity optimization.`;
+                Core Operational Rules & Guidelines:
+                1. Accuracy & Authenticity: Answer all questions accurately, naturally, and factually. Never provide misleading information. If you are uncertain about something, clearly state your uncertainty.
+                2. Context Preservation: Understand conversation context and maintain complete continuity. Handle follow-up questions naturally without requiring the user to repeat previous information.
+                3. Proactive Clarification: If the user's request is vague or unclear, politely ask strategic follow-up questions to understand their exact goal.
+                4. Comprehensive Problem Solving: Assist with writing, clean coding, complex debugging, mathematical problem-solving, structured research, summaries, and general knowledge. Suggest better alternative solutions or creative shortcuts when relevant.
+                5. Adaptive Length:
+                   - Keep answers short and precise for simple, casual questions.
+                   - Provide rich, deeply detailed, step-by-step instructions for complex, conceptual topics.
+                6. Multi-language Autodetect: Automatically identify the language used by the user and respond entirely in that same language.
+                7. Formatting & Layout: Use structured Markdown syntax beautifully. Incorporate neat bullet points, numbered lists, markdown tables, bold headings, and syntax-highlighted code blocks where applicable to maximize readability.
+                8. Persona Style: Warm, human-like, polite, professional, solutions-oriented, intelligent, and highly conversational.`;
 
                 try {
-                    const reply = await callGeminiAPI(userText, systemPrompt);
+                    const reply = await callGeminiAPI(updatedMessages, systemPrompt);
                     setChatMessages(prev => [...prev, { role: 'assistant', text: reply }]);
                 } catch (error) {
-                    setChatMessages(prev => [...prev, { role: 'assistant', text: `⚠️ Error setting up sync: ${error.message}` }]);
+                    setChatMessages(prev => [...prev, { role: 'assistant', text: `⚠️ Connection status: ${error.message}. Please retry.` }]);
                 } finally {
                     setIsChatLoading(false);
                 }
@@ -367,6 +735,70 @@
                 document.getElementById('mockup-dashboard').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 showNotification(`Switched demo preview to ${tabName.toUpperCase()} view!`);
             };
+
+            const getColorClass = (color) => {
+                switch(color) {
+                    case 'blue': return 'bg-blue-600/10 border-blue-500 text-blue-200';
+                    case 'purple': return 'bg-purple-600/10 border-purple-500 text-purple-200';
+                    case 'gray': return 'bg-gray-500/10 border-gray-400 text-gray-300';
+                    case 'indigo': return 'bg-indigo-600/10 border-indigo-500 text-indigo-200';
+                    case 'emerald': return 'bg-emerald-600/10 border-emerald-500 text-emerald-200';
+                    default: return 'bg-blue-600/10 border-blue-500 text-blue-200';
+                }
+            };
+
+            const formatTimer = (totalSecs) => {
+                const mins = Math.floor(totalSecs / 60);
+                const secs = totalSecs % 60;
+                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            };
+
+            // Handle timer duration settings
+            const handleTimerDurationChange = (minutes) => {
+                const cleanMin = Math.max(1, Math.min(180, parseInt(minutes) || 1));
+                setTimerAdjustmentMinutes(cleanMin);
+                if (!isTimerRunning && timerMode === 'pomodoro') {
+                    setTimerSeconds(cleanMin * 60);
+                }
+            };
+
+            const monthsList = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+
+            const generateYears = () => {
+                const yrs = [];
+                for (let y = 2010; y <= 2040; y++) {
+                    yrs.push(y);
+                }
+                return yrs;
+            };
+
+            // Days in month logic
+            const getDaysInMonth = (month, year) => {
+                return new Date(year, month + 1, 0).getDate();
+            };
+
+            const getFirstDayOfMonth = (month, year) => {
+                return new Date(year, month, 1).getDay(); // 0 is Sunday, 1 is Monday...
+            };
+
+            const handleDateClick = (dayNum) => {
+                const yearStr = calendarYear;
+                const monthStr = String(calendarMonth + 1).padStart(2, '0');
+                const dayStr = String(dayNum).padStart(2, '0');
+                const combined = `${yearStr}-${monthStr}-${dayStr}`;
+                setSelectedDate(combined);
+                showNotification(`Active date set to: ${combined}`);
+            };
+
+            // Calculate task indicators on specific dates
+            const getTasksForDate = (dateString) => {
+                return tasks.filter(t => t.date === dateString);
+            };
+
+            const activeTasksForSelectedDate = getTasksForDate(selectedDate);
 
             return (
                 <div className="relative min-h-screen bg-[#03030c] text-gray-100 overflow-x-hidden selection:bg-purple-600/30 font-sans">
@@ -397,16 +829,157 @@
                                     Anvab <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 font-extrabold">AI OS</span>
                                 </span>
                             </div>
-                            <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
+                            <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-400">
                                 <a href="#operating-system" className="hover:text-white transition-colors">Overview</a>
                                 <a href="#mockup-dashboard" className="hover:text-white transition-colors">Live App Demo</a>
                                 <a href="#features" className="hover:text-white transition-colors">OS Features</a>
                             </nav>
-                            <a href="#mockup-dashboard" className="px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm font-semibold hover:bg-white/10 transition-all">
-                                Try Demo Live
-                            </a>
+
+                            {/* ACCOUNT SECTION HEADER */}
+                            <div className="flex items-center gap-3">
+                                {isLoggedIn ? (
+                                    <div className="relative" ref={accountMenuRef}>
+                                        <button 
+                                            onClick={() => setShowAccountDropdown(!showAccountDropdown)}
+                                            className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all focus:outline-none"
+                                        >
+                                            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white shadow-md">
+                                                {user?.avatar || 'AS'}
+                                            </div>
+                                            <span className="hidden sm:inline text-xs font-semibold text-gray-200">
+                                                {user?.name || 'Ansh'}
+                                            </span>
+                                            <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                                            </svg>
+                                        </button>
+
+                                        {/* Dynamic Header Profile Dropdown */}
+                                        {showAccountDropdown && (
+                                            <div className="absolute right-0 mt-2 w-64 bg-[#0a0b16] border border-white/10 rounded-2xl shadow-2xl p-4 space-y-4 z-50 backdrop-blur-xl">
+                                                <div className="border-b border-white/5 pb-3">
+                                                    <div className="text-xs text-purple-400 font-bold uppercase tracking-wider mb-1">Active Account</div>
+                                                    <div className="text-sm font-bold text-white">{user?.name}</div>
+                                                    <div className="text-xs text-gray-400 truncate">{user?.email}</div>
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <button 
+                                                        onClick={() => { focusFeatureTab('dashboard'); setShowAccountDropdown(false); }}
+                                                        className="w-full text-left px-3 py-2 rounded-lg text-xs hover:bg-white/5 transition-colors text-gray-300 flex items-center gap-2"
+                                                    >
+                                                        📊 View Live Dashboard
+                                                    </button>
+                                                    <button 
+                                                        onClick={handleLogout}
+                                                        className="w-full text-left px-3 py-2 rounded-lg text-xs hover:bg-red-500/10 text-red-400 transition-colors flex items-center gap-2"
+                                                    >
+                                                        🚪 Log Out
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-2">
+                                        <button 
+                                            onClick={() => setAuthMode('signin')}
+                                            className="px-4 py-2 text-xs font-semibold text-gray-300 hover:text-white transition-all"
+                                        >
+                                            Sign In
+                                        </button>
+                                        <button 
+                                            onClick={() => setAuthMode('signup')}
+                                            className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 text-xs font-bold transition-all text-white"
+                                        >
+                                            Sign Up
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </header>
+
+                    {/* --- AUTHENTICATION MODAL (SIGN IN / SIGN UP PORTAL) --- */}
+                    {authMode && (
+                        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+                            <div className="relative w-full max-w-md bg-[#080914] border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden">
+                                <div className="absolute -top-12 -left-12 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl" />
+                                <div className="absolute -bottom-12 -right-12 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl" />
+
+                                <button 
+                                    onClick={() => setAuthMode(null)} 
+                                    className="absolute top-4 right-4 text-gray-400 hover:text-white p-1 rounded-lg transition-colors"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+
+                                <div className="text-center mb-6">
+                                    <div className="w-14 h-14 mx-auto mb-4 flex items-center justify-center bg-white/[0.02] border border-white/10 rounded-2xl">
+                                        <Icons.AnvabLogo className="w-10 h-10" />
+                                    </div>
+                                    <h2 className="text-2xl font-black text-white">
+                                        {authMode === 'signup' ? 'Create Anvab Account' : 'Welcome to Anvab OS'}
+                                    </h2>
+                                    <p className="text-xs text-gray-400 mt-1">
+                                        Securely authenticate your credentials using a valid Gmail account.
+                                    </p>
+                                </div>
+
+                                <form onSubmit={handleAuthSubmit} className="space-y-4">
+                                    {authMode === 'signup' && (
+                                        <div>
+                                            <label className="block text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1.5">Username</label>
+                                            <input 
+                                                type="text" 
+                                                value={authName}
+                                                onChange={(e) => setAuthName(e.target.value)}
+                                                placeholder="" 
+                                                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors" 
+                                            />
+                                        </div>
+                                    )}
+                                    <div>
+                                        <label className="block text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1.5">Email Address</label>
+                                        <input 
+                                            type="email" 
+                                            value={authEmail}
+                                            onChange={(e) => setAuthEmail(e.target.value)}
+                                            placeholder="yourname@gmail.com" 
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors" 
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1.5">Password</label>
+                                        <input 
+                                            type="password" 
+                                            value={authPassword}
+                                            onChange={(e) => setAuthPassword(e.target.value)}
+                                            placeholder="••••••••" 
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors" 
+                                        />
+                                    </div>
+
+                                    <button 
+                                        type="submit" 
+                                        className="w-full py-3 mt-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-95 text-xs font-bold text-white transition-all shadow-lg shadow-blue-500/20"
+                                    >
+                                        {authMode === 'signup' ? 'Register Account' : 'Authenticate Credentials'}
+                                    </button>
+                                </form>
+
+                                <div className="text-center mt-4">
+                                    <button 
+                                        onClick={() => setAuthMode(authMode === 'signin' ? 'signup' : 'signin')}
+                                        className="text-xs text-gray-400 hover:text-purple-400 transition-colors"
+                                    >
+                                        {authMode === 'signin' ? "Don't have an account? Sign Up" : "Already registered? Sign In"}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     {/* --- HERO SECTION --- */}
                     <section className="relative pt-16 pb-12 px-4 sm:px-6 lg:px-8 text-center max-w-6xl mx-auto">
@@ -499,16 +1072,52 @@
 
                             {/* Right Side: LIVE INTERACTIVE APP DEMO SHIELD */}
                             <div className="lg:col-span-8 space-y-4" id="mockup-dashboard">
-                                <div className="text-center sm:text-left">
-                                    <span className="text-xs font-bold uppercase tracking-wider text-purple-400">Live Demo Sandbox</span>
-                                    <h3 className="text-xl font-extrabold text-white">Click any view tab inside this mockup to interact!</h3>
+                                <div className="text-center sm:text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                                    <div>
+                                        <span className="text-xs font-bold uppercase tracking-wider text-purple-400">Live Demo Sandbox</span>
+                                        <h3 className="text-xl font-extrabold text-white">Click any view tab inside this mockup to interact!</h3>
+                                    </div>
+                                    {isLoggedIn && (
+                                        <span className="inline-flex self-start sm:self-auto items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-bold text-emerald-400">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                            Logged In ({user?.name})
+                                        </span>
+                                    )}
                                 </div>
 
-                                <div className="relative rounded-2xl border border-white/10 bg-[#07080f]/90 p-3 sm:p-5 shadow-2xl shadow-indigo-500/5 backdrop-blur-xl">
+                                <div className="relative rounded-2xl border border-white/10 bg-[#07080f]/90 p-3 sm:p-5 shadow-2xl shadow-indigo-500/5 backdrop-blur-xl overflow-hidden">
+                                    
+                                    {/* STRICT AUTHENTICATION GATING SHIELD */}
+                                    {!isLoggedIn && (
+                                        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/80 backdrop-blur-md p-6 text-center animate-fade-in">
+                                            <div className="w-16 h-16 bg-white/[0.02] border border-white/10 rounded-2xl flex items-center justify-center mb-4 shadow-xl">
+                                                <Icons.Lock className="w-8 h-8 text-purple-400" />
+                                            </div>
+                                            <h3 className="text-xl font-black text-white mb-2">Anvab AI OS Gated</h3>
+                                            <p className="text-xs text-gray-400 max-w-sm mb-6 leading-relaxed">
+                                                This interactive operating system sandbox is locked. Please sign in or register a valid Gmail account to unlock the workspace, manage live tasks, sync notes, and test direct AI features.
+                                            </p>
+                                            <div className="flex gap-3">
+                                                <button 
+                                                    onClick={() => setAuthMode('signin')}
+                                                    className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold transition-all text-white"
+                                                >
+                                                    Sign In
+                                                </button>
+                                                <button 
+                                                    onClick={() => setAuthMode('signup')}
+                                                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 text-xs font-bold transition-all text-white shadow-lg shadow-blue-500/20"
+                                                >
+                                                    Sign Up
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     {/* Dashboard Frame Inner Container */}
-                                    <div className="rounded-xl overflow-hidden bg-[#04050a] grid grid-cols-12 border border-white/5 min-h-[480px]">
+                                    <div className={`rounded-xl overflow-hidden bg-[#04050a] grid grid-cols-12 border border-white/5 min-h-[480px] transition-all duration-300 ${!isLoggedIn ? 'blur-md select-none pointer-events-none' : ''}`}>
                                         
-                                        {/* Sandbox Side bar */}
+                                        {/* Sandbox Sidebar */}
                                         <div className="col-span-12 md:col-span-3 bg-[#080911] p-4 border-r border-white/5 flex flex-col justify-between">
                                             <div className="space-y-6">
                                                 <div className="flex items-center gap-2 font-extrabold text-sm text-white">
@@ -532,22 +1141,87 @@
                                                         ✨ AI Assistant
                                                     </button>
                                                 </nav>
+
+                                                {/* Global Configurable Focus Timer Card in Sidebar */}
+                                                <div className="hidden md:block p-3 rounded-xl border border-white/5 bg-white/[0.02] space-y-2.5 shadow-inner">
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-purple-400 flex items-center gap-1">
+                                                            <Icons.Sparkles className="w-3 h-3" /> Focus Timer
+                                                        </span>
+                                                        <div className="flex bg-black/40 rounded border border-white/10 p-0.5">
+                                                            <button 
+                                                                onClick={() => { setTimerMode('pomodoro'); setIsTimerRunning(false); setTimerSeconds(timerAdjustmentMinutes * 60); }}
+                                                                className={`px-1.5 py-0.5 text-[8px] font-bold rounded transition-colors ${timerMode === 'pomodoro' ? 'bg-blue-600 text-white' : 'text-gray-400'}`}
+                                                            >
+                                                                Pomo
+                                                            </button>
+                                                            <button 
+                                                                onClick={() => { setTimerMode('stopwatch'); setIsTimerRunning(false); setElapsedStopwatchSeconds(0); }}
+                                                                className={`px-1.5 py-0.5 text-[8px] font-bold rounded transition-colors ${timerMode === 'stopwatch' ? 'bg-purple-600 text-white' : 'text-gray-400'}`}
+                                                            >
+                                                                Stop
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex items-center justify-between gap-2">
+                                                        <div className="text-xl font-black font-mono tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+                                                            {timerMode === 'pomodoro' ? formatTimer(timerSeconds) : formatTimer(elapsedStopwatchSeconds)}
+                                                        </div>
+
+                                                        <div className="flex gap-1 shrink-0">
+                                                            <button 
+                                                                onClick={() => setIsTimerRunning(!isTimerRunning)}
+                                                                className={`px-2 py-1 text-[9px] font-bold rounded-lg transition-all ${isTimerRunning ? 'bg-red-600' : 'bg-gradient-to-r from-blue-600 to-purple-600'} text-white`}
+                                                            >
+                                                                {isTimerRunning ? 'Pause' : 'Start'}
+                                                            </button>
+                                                            <button 
+                                                                onClick={() => {
+                                                                    setIsTimerRunning(false);
+                                                                    if (timerMode === 'pomodoro') setTimerSeconds(timerAdjustmentMinutes * 60);
+                                                                    else setElapsedStopwatchSeconds(0);
+                                                                    showNotification("Timer reset.");
+                                                                }}
+                                                                className="px-1.5 py-1 text-[9px] font-bold bg-white/5 hover:bg-white/10 rounded-lg text-gray-400"
+                                                                title="Reset Clock"
+                                                            >
+                                                                ↻
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    {timerMode === 'pomodoro' && (
+                                                        <div className="flex items-center justify-between pt-1.5 border-t border-white/5 text-[9px] text-gray-400">
+                                                            <span>Adjust (mins):</span>
+                                                            <input 
+                                                                type="number"
+                                                                min="1"
+                                                                max="180"
+                                                                disabled={isTimerRunning}
+                                                                value={timerAdjustmentMinutes}
+                                                                onChange={(e) => handleTimerDurationChange(e.target.value)}
+                                                                className="w-10 bg-black/40 border border-white/10 rounded px-1.5 py-0.5 text-[9px] text-white text-center font-mono focus:outline-none focus:border-purple-500 disabled:opacity-50"
+                                                            />
+                                                        </div>
+                                                    )}
+                                                </div>
+
                                             </div>
                                             <div className="hidden md:flex items-center gap-2 pt-4 border-t border-white/5 text-xs text-gray-500">
                                                 <Icons.User className="w-4 h-4" />
-                                                <span>Ansh (Beta Room)</span>
+                                                <span>{isLoggedIn ? user?.name : 'Ansh'} (Beta Room)</span>
                                             </div>
                                         </div>
 
                                         {/* Sandbox App Main Window */}
                                         <div className="col-span-12 md:col-span-9 p-4 sm:p-6 flex flex-col justify-between overflow-y-auto max-h-[500px]">
                                             
-                                            {/* Dynamic Tab Rendering */}
                                             {activeTab === 'dashboard' && (
                                                 <div className="space-y-6">
                                                     <div className="flex justify-between items-center">
                                                         <div>
-                                                            <h3 className="text-lg font-black text-white">Good morning, Ansh 👋</h3>
+                                                            <h3 className="text-lg font-black text-white">Good morning, {isLoggedIn ? user?.name : 'Ansh'} 👋</h3>
                                                             <p className="text-xs text-gray-400">Here's your productivity overview for today.</p>
                                                         </div>
                                                         <div className="flex gap-2">
@@ -569,51 +1243,168 @@
                                                             <div className="text-2xl font-extrabold text-purple-400 mt-1">{tasks.filter(t => t.completed).length}</div>
                                                         </div>
                                                         <div className="bg-white/5 border border-white/5 rounded-xl p-3">
-                                                            <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Scheduled Today</span>
-                                                            <div className="text-2xl font-extrabold text-indigo-400 mt-1">4 Blocks</div>
+                                                            <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Schedule Blocks</span>
+                                                            <div className="text-2xl font-extrabold text-indigo-400 mt-1">{schedule.length}</div>
                                                         </div>
                                                         <div className="bg-white/5 border border-white/5 rounded-xl p-3">
-                                                            <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Focus Target</span>
-                                                            <div className="text-2xl font-extrabold text-emerald-400 mt-1">4.2h</div>
+                                                            <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Selected Date</span>
+                                                            <div className="text-xs font-mono font-bold text-emerald-400 mt-2 truncate">{selectedDate}</div>
                                                         </div>
                                                     </div>
 
-                                                    {/* Today's Schedule & High Priority Checklist split */}
+                                                    {/* TODAY'S FOCUS TIMER / STOPWATCH COMPONENT WITH CONFIGURABLE SLIDERS */}
+                                                    <div className="bg-gradient-to-r from-blue-950/30 to-purple-950/30 p-4 rounded-xl border border-blue-500/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                                                        <div className="space-y-1.5 text-center sm:text-left">
+                                                            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-purple-400 uppercase tracking-widest">
+                                                                <Icons.Sparkles className="w-3.5 h-3.5" /> Configurable Focus Timer
+                                                            </span>
+                                                            <h4 className="text-sm font-extrabold text-white">Track Your Productivity Clock</h4>
+                                                            <p className="text-[10px] text-gray-400">Set customized minutes for the Pomodoro or use standard Stopwatch.</p>
+                                                            
+                                                            {/* Custom Duration Configurator */}
+                                                            {timerMode === 'pomodoro' && (
+                                                                <div className="flex items-center gap-2 pt-1">
+                                                                    <span className="text-[9px] text-gray-400">Duration (mins):</span>
+                                                                    <input 
+                                                                        type="number"
+                                                                        min="1"
+                                                                        max="180"
+                                                                        disabled={isTimerRunning}
+                                                                        value={timerAdjustmentMinutes}
+                                                                        onChange={(e) => handleTimerDurationChange(e.target.value)}
+                                                                        className="w-14 bg-black/40 border border-white/10 rounded px-1.5 py-0.5 text-[10px] text-white font-mono focus:outline-none focus:border-purple-500 disabled:opacity-50"
+                                                                    />
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                        <div className="flex flex-col items-center gap-2">
+                                                            {/* Mode Selector */}
+                                                            <div className="flex rounded-lg overflow-hidden bg-black/40 border border-white/10 p-0.5">
+                                                                <button 
+                                                                    onClick={() => { setTimerMode('pomodoro'); setIsTimerRunning(false); setTimerSeconds(timerAdjustmentMinutes * 60); }}
+                                                                    className={`px-2.5 py-1 text-[9px] font-bold rounded-md transition-colors ${timerMode === 'pomodoro' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}
+                                                                >
+                                                                    Pomodoro
+                                                                </button>
+                                                                <button 
+                                                                    onClick={() => { setTimerMode('stopwatch'); setIsTimerRunning(false); setElapsedStopwatchSeconds(0); }}
+                                                                    className={`px-2.5 py-1 text-[9px] font-bold rounded-md transition-colors ${timerMode === 'stopwatch' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
+                                                                >
+                                                                    Stopwatch
+                                                                </button>
+                                                            </div>
+
+                                                            {/* The Clock Timer Display */}
+                                                            <div className="text-3xl font-black font-mono tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+                                                                {timerMode === 'pomodoro' ? formatTimer(timerSeconds) : formatTimer(elapsedStopwatchSeconds)}
+                                                            </div>
+
+                                                            {/* Controls */}
+                                                            <div className="flex gap-2">
+                                                                <button 
+                                                                    onClick={() => setIsTimerRunning(!isTimerRunning)}
+                                                                    className={`px-3 py-1 text-[10px] font-bold rounded-lg transition-all ${isTimerRunning ? 'bg-red-600 hover:bg-red-500' : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90'} text-white`}
+                                                                >
+                                                                    {isTimerRunning ? 'Pause' : 'Start'}
+                                                                </button>
+                                                                <button 
+                                                                    onClick={() => {
+                                                                        setIsTimerRunning(false);
+                                                                        if (timerMode === 'pomodoro') setTimerSeconds(timerAdjustmentMinutes * 60);
+                                                                        else setElapsedStopwatchSeconds(0);
+                                                                        showNotification("Timer has been reset.");
+                                                                    }}
+                                                                    className="px-3 py-1 text-[10px] font-bold bg-white/5 hover:bg-white/10 rounded-lg text-gray-300 transition-colors"
+                                                                >
+                                                                    Reset
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Today's Schedule & Selected Date checklist split */}
                                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                                                        {/* Live Planner Blocks */}
-                                                        <div className="bg-[#0c0d16] p-4 rounded-xl border border-white/5 space-y-3">
+                                                        
+                                                        {/* Editable Schedule Block Component */}
+                                                        <div className="bg-[#0c0d16] p-4 rounded-xl border border-white/5 space-y-3 relative">
                                                             <div className="flex justify-between items-center">
                                                                 <span className="text-xs font-bold text-white">Daily Schedule Blocks</span>
-                                                                <span className="text-[10px] text-purple-400">Smart Synced</span>
+                                                                <button 
+                                                                    onClick={() => setIsEditingSchedule(!isEditingSchedule)}
+                                                                    className="px-2 py-1 text-[10px] font-semibold text-purple-400 border border-purple-500/20 bg-purple-500/5 hover:bg-purple-500/10 rounded-lg transition-all flex items-center gap-1"
+                                                                >
+                                                                    <Icons.Edit3 className="w-3 h-3" />
+                                                                    {isEditingSchedule ? 'Close Editor' : 'Edit Schedule'}
+                                                                </button>
                                                             </div>
-                                                            <div className="space-y-2">
-                                                                <div className="p-2.5 rounded-lg bg-blue-600/10 border-l-4 border-blue-500 text-xs flex justify-between">
-                                                                    <span>👨‍💻 Deep Work (Coding)</span>
-                                                                    <span className="text-gray-400">9:00 - 11:00 AM</span>
-                                                                </div>
-                                                                <div className="p-2.5 rounded-lg bg-purple-600/10 border-l-4 border-purple-500 text-xs flex justify-between">
-                                                                    <span>🤝 Team Sync Meeting</span>
-                                                                    <span className="text-gray-400">11:30 - 12:30 PM</span>
-                                                                </div>
-                                                                <div className="p-2.5 rounded-lg bg-gray-500/10 border-l-4 border-gray-400 text-xs flex justify-between">
-                                                                    <span>🍱 Lunch & Refresh</span>
-                                                                    <span className="text-gray-400">12:30 - 1:15 PM</span>
-                                                                </div>
-                                                                <div className="p-2.5 rounded-lg bg-indigo-600/10 border-l-4 border-indigo-500 text-xs flex justify-between">
-                                                                    <span>🚀 Project Optimization</span>
-                                                                    <span className="text-gray-400">1:15 - 3:00 PM</span>
-                                                                </div>
+
+                                                            {/* Inline Add Schedule Block form */}
+                                                            {isEditingSchedule && (
+                                                                <form onSubmit={handleAddScheduleBlock} className="bg-white/[0.02] border border-white/10 p-3 rounded-xl space-y-2 mb-2 animate-fade-in">
+                                                                    <div className="text-[10px] text-purple-300 font-bold uppercase tracking-wider mb-1">Add Block</div>
+                                                                    <input 
+                                                                        type="text" 
+                                                                        value={newScheduleTitle}
+                                                                        onChange={(e) => setNewScheduleTitle(e.target.value)}
+                                                                        placeholder="Block Label (e.g. 🛠️ Study DSA)" 
+                                                                        className="w-full bg-white/5 border border-white/10 rounded-lg px-2 py-1.5 text-[11px] text-white focus:outline-none focus:border-blue-500" 
+                                                                    />
+                                                                    <div className="flex gap-2">
+                                                                        <input 
+                                                                            type="text" 
+                                                                            value={newScheduleTime}
+                                                                            onChange={(e) => setNewScheduleTime(e.target.value)}
+                                                                            placeholder="Time Range (e.g. 3:00 - 5:00 PM)" 
+                                                                            className="flex-1 bg-white/5 border border-white/10 rounded-lg px-2 py-1.5 text-[11px] text-white focus:outline-none focus:border-blue-500" 
+                                                                        />
+                                                                        <select 
+                                                                            value={newScheduleColor} 
+                                                                            onChange={(e) => setNewScheduleColor(e.target.value)}
+                                                                            className="bg-[#0c0d16] border border-white/10 rounded-lg px-1 text-[11px] text-gray-300 focus:outline-none"
+                                                                        >
+                                                                            <option value="blue">Blue</option>
+                                                                            <option value="purple">Purple</option>
+                                                                            <option value="indigo">Indigo</option>
+                                                                            <option value="emerald">Emerald</option>
+                                                                            <option value="gray">Gray</option>
+                                                                        </select>
+                                                                        <button type="submit" className="px-3 bg-blue-600 hover:bg-blue-500 text-[11px] font-bold text-white rounded-lg transition-all">+</button>
+                                                                    </div>
+                                                                </form>
+                                                            )}
+
+                                                            <div className="space-y-2 max-h-[190px] overflow-y-auto">
+                                                                {schedule.length > 0 ? schedule.map(block => (
+                                                                    <div key={block.id} className={`p-2.5 rounded-lg border-l-4 text-xs flex justify-between items-center transition-all ${getColorClass(block.color)}`}>
+                                                                        <div>
+                                                                            <span className="font-semibold">{block.title}</span>
+                                                                            <span className="block text-[10px] text-gray-400">{block.time}</span>
+                                                                        </div>
+                                                                        {isEditingSchedule && (
+                                                                            <button 
+                                                                                onClick={() => handleDeleteScheduleBlock(block.id)}
+                                                                                className="p-1 hover:bg-red-500/20 text-red-400 rounded-lg transition-colors"
+                                                                                title="Delete Block"
+                                                                            >
+                                                                                <Icons.Trash2 className="w-3.5 h-3.5" />
+                                                                            </button>
+                                                                        )}
+                                                                    </div>
+                                                                )) : (
+                                                                    <div className="text-center py-6 text-xs text-gray-500 italic">No schedule blocks remaining. Add some to get organized!</div>
+                                                                )}
                                                             </div>
                                                         </div>
 
-                                                        {/* Priority Tasks List */}
+                                                        {/* Target-Date Dynamic Checklist */}
                                                         <div className="bg-[#0c0d16] p-4 rounded-xl border border-white/5 space-y-3">
                                                             <div className="flex justify-between items-center">
-                                                                <span className="text-xs font-bold text-white">Top Priority Check</span>
-                                                                <span className="text-[10px] text-gray-500">Instant toggle</span>
+                                                                <span className="text-xs font-bold text-white">Checklist ({selectedDate})</span>
+                                                                <span className="text-[10px] text-purple-300 font-bold">Dynamic Date filter</span>
                                                             </div>
-                                                            <div className="space-y-2">
-                                                                {tasks.slice(0, 3).map(task => (
+                                                            <div className="space-y-2 max-h-[220px] overflow-y-auto">
+                                                                {activeTasksForSelectedDate.length > 0 ? activeTasksForSelectedDate.map(task => (
                                                                     <div key={task.id} className="flex items-center justify-between p-2 rounded bg-white/5 hover:bg-white/10 transition-colors">
                                                                         <div className="flex items-center gap-2">
                                                                             <input type="checkbox" checked={task.completed} onChange={() => toggleTaskCompleted(task.id)} className="w-3.5 h-3.5 rounded border-white/20 bg-transparent text-purple-600 focus:ring-0" />
@@ -621,7 +1412,9 @@
                                                                         </div>
                                                                         <span className={`text-[9px] px-1.5 py-0.5 rounded font-extrabold ${task.priority === 'High' ? 'bg-red-500/20 text-red-300' : 'bg-yellow-500/20 text-yellow-300'}`}>{task.priority}</span>
                                                                     </div>
-                                                                ))}
+                                                                )) : (
+                                                                    <div className="text-center py-8 text-xs text-gray-500 italic">No tasks scheduled for {selectedDate}. Tap Calendar to add some!</div>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -639,9 +1432,14 @@
 
                                             {activeTab === 'tasks' && (
                                                 <div className="space-y-6">
-                                                    <div>
-                                                        <h3 className="text-base font-bold text-white">✓ Interactive Task Manager</h3>
-                                                        <p className="text-xs text-gray-400">Add custom tasks, set priorities, and trigger real AI logic breakdown.</p>
+                                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                                        <div>
+                                                            <h3 className="text-base font-bold text-white">✓ Interactive Task Manager</h3>
+                                                            <p className="text-xs text-gray-400">Add custom tasks, set priorities, and trigger real AI logic breakdown.</p>
+                                                        </div>
+                                                        <div className="bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-xs text-purple-300 font-medium">
+                                                            📅 Scheduled Date: <span className="font-bold text-white font-mono">{selectedDate}</span>
+                                                        </div>
                                                     </div>
 
                                                     {/* New Task Entry Form */}
@@ -659,9 +1457,20 @@
                                                         </div>
                                                     </form>
 
+                                                    {/* Dynamic Toggle Date Mode */}
+                                                    <div className="flex gap-2 border-b border-white/5 pb-2">
+                                                        <span className="text-xs text-gray-400 font-bold self-center mr-2">Display Mode:</span>
+                                                        <button 
+                                                            onClick={() => showNotification("Switched views")}
+                                                            className="px-2.5 py-1 rounded bg-blue-600/10 border border-blue-500/20 text-[10px] text-blue-300 font-bold"
+                                                        >
+                                                            Filtered for Date ({selectedDate})
+                                                        </button>
+                                                    </div>
+
                                                     {/* Interactive Task Listing */}
-                                                    <div className="space-y-2">
-                                                        {tasks.map(task => (
+                                                    <div className="space-y-2 max-h-[250px] overflow-y-auto">
+                                                        {activeTasksForSelectedDate.length > 0 ? activeTasksForSelectedDate.map(task => (
                                                             <div key={task.id} className="bg-white/5 border border-white/5 rounded-xl p-3 flex flex-col gap-2 transition-all">
                                                                 <div className="flex items-center justify-between">
                                                                     <div className="flex items-center gap-2">
@@ -689,7 +1498,11 @@
                                                                     </div>
                                                                 )}
                                                             </div>
-                                                        ))}
+                                                        )) : (
+                                                            <div className="text-center py-10 text-xs text-gray-500 italic">
+                                                                No tasks found scheduled for {selectedDate}. Type a title above to create one!
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
                                             )}
@@ -723,7 +1536,7 @@
                                                                     </div>
                                                                 )}
                                                             </div>
-                                                            <div className="text-[9px] text-gray-600 border-t border-white/5 pt-2">Powered by gemini-2.5-flash</div>
+                                                            <div className="text-[9px] text-gray-600 border-t border-white/5 pt-2">Powered by gemini-3-flash</div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -731,31 +1544,149 @@
 
                                             {activeTab === 'calendar' && (
                                                 <div className="space-y-4">
-                                                    <div>
-                                                        <h3 className="text-base font-bold text-white">📅 Dynamic Planner & Focus Time</h3>
-                                                        <p className="text-xs text-gray-400">Keep calendar timelines streamlined and manage upcoming deliverables.</p>
-                                                    </div>
-
-                                                    <div className="grid grid-cols-7 gap-1 text-center bg-white/5 p-2 rounded-xl">
-                                                        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-                                                            <span key={day} className="text-[10px] font-bold text-gray-500 uppercase">{day}</span>
-                                                        ))}
-                                                        {Array.from({ length: 28 }).map((_, i) => (
-                                                            <div key={i} className={`p-2 rounded-lg text-xs cursor-pointer hover:bg-white/10 transition-colors ${i === 3 ? 'bg-gradient-to-tr from-blue-600 to-purple-600 text-white font-bold' : 'text-gray-400'}`}>
-                                                                {i + 1}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-
-                                                    <div className="bg-[#0c0d16] p-3 rounded-xl border border-white/5 space-y-2">
-                                                        <div className="text-xs font-bold text-white">Milestone Forecasts:</div>
-                                                        <div className="flex items-center gap-3 text-xs">
-                                                            <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-                                                            <span className="text-gray-300 font-medium">Beta Launch of Anvab OS Platform</span>
+                                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-3">
+                                                        <div>
+                                                            <h3 className="text-base font-bold text-white">📅 Dynamic Planner & Focus Time</h3>
+                                                            <p className="text-xs text-gray-400">Connect schedules with year limits 2010 to 2040 and plan custom day tasks.</p>
                                                         </div>
-                                                        <div className="flex items-center gap-3 text-xs">
-                                                            <div className="w-2.5 h-2.5 rounded-full bg-purple-500" />
-                                                            <span className="text-gray-300 font-medium">Weekly Executive Planning Session</span>
+                                                        
+                                                        {/* Interactive Selectors for Months & Year limits from 2010 to 2040 */}
+                                                        <div className="flex gap-2">
+                                                            <select 
+                                                                value={calendarMonth} 
+                                                                onChange={(e) => setCalendarMonth(parseInt(e.target.value))}
+                                                                className="bg-gray-900 border border-white/10 rounded-xl px-2.5 py-1.5 text-xs text-gray-200 focus:outline-none"
+                                                            >
+                                                                {monthsList.map((m, idx) => (
+                                                                    <option key={idx} value={idx}>{m}</option>
+                                                                ))}
+                                                            </select>
+
+                                                            <select 
+                                                                value={calendarYear} 
+                                                                onChange={(e) => setCalendarYear(parseInt(e.target.value))}
+                                                                className="bg-gray-900 border border-white/10 rounded-xl px-2.5 py-1.5 text-xs text-gray-200 focus:outline-none"
+                                                            >
+                                                                {generateYears().map(yr => (
+                                                                    <option key={yr} value={yr}>{yr}</option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Calendar Grid Logic */}
+                                                    <div className="grid grid-cols-7 gap-1 text-center bg-white/5 p-3 rounded-xl border border-white/5">
+                                                        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                                                            <span key={day} className="text-[10px] font-black text-gray-500 uppercase py-1">{day}</span>
+                                                        ))}
+                                                        
+                                                        {/* Offset Empty Days at start of month */}
+                                                        {Array.from({ length: getFirstDayOfMonth(calendarMonth, calendarYear) }).map((_, i) => (
+                                                            <div key={`offset-${i}`} className="p-2" />
+                                                        ))}
+
+                                                        {/* Days of Selected Month */}
+                                                        {Array.from({ length: getDaysInMonth(calendarMonth, calendarYear) }).map((_, i) => {
+                                                            const dayNum = i + 1;
+                                                            const yearStr = calendarYear;
+                                                            const monthStr = String(calendarMonth + 1).padStart(2, '0');
+                                                            const dayStr = String(dayNum).padStart(2, '0');
+                                                            const formattedLoopDate = `${yearStr}-${monthStr}-${dayStr}`;
+                                                            
+                                                            const isSelected = selectedDate === formattedLoopDate;
+                                                            const scheduledOnDay = getTasksForDate(formattedLoopDate);
+
+                                                            return (
+                                                                <div 
+                                                                    key={dayNum} 
+                                                                    onClick={() => handleDateClick(dayNum)}
+                                                                    className={`relative p-2.5 rounded-lg text-xs cursor-pointer hover:bg-white/10 transition-colors flex flex-col items-center justify-center min-h-[40px] ${isSelected ? 'bg-gradient-to-tr from-blue-600 to-purple-600 text-white font-black shadow-lg shadow-blue-500/10' : 'text-gray-300'}`}
+                                                                >
+                                                                    <span>{dayNum}</span>
+                                                                    {/* Dot indicator if day has tasks scheduled */}
+                                                                    {scheduledOnDay.length > 0 && (
+                                                                        <div className={`w-1.5 h-1.5 rounded-full mt-0.5 ${isSelected ? 'bg-white' : 'bg-purple-400 animate-pulse'}`} />
+                                                                    )}
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+
+                                                    {/* Calendar Day Detail Box */}
+                                                    <div className="bg-[#0c0d16] p-4 rounded-xl border border-white/5 space-y-3">
+                                                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                                                            <div>
+                                                                <span className="text-xs font-bold text-white">Schedules on: <span className="text-purple-400 font-mono font-black">{selectedDate}</span></span>
+                                                                <p className="text-[10px] text-gray-400">Add tasks below to schedule them to this selected date.</p>
+                                                            </div>
+                                                            
+                                                            <button 
+                                                                onClick={() => setActiveTab('tasks')}
+                                                                className="px-2.5 py-1 rounded bg-blue-600/20 border border-blue-500/20 text-[10px] text-blue-300 font-semibold"
+                                                            >
+                                                                Open Task Manager
+                                                            </button>
+                                                        </div>
+
+                                                        {/* Quick Add Task Form tied to this calendar date */}
+                                                        <div className="flex gap-2">
+                                                            <input 
+                                                                type="text" 
+                                                                id="quick-task-input"
+                                                                placeholder="Add task for this date..." 
+                                                                className="bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500 flex-1"
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter') {
+                                                                        const val = e.target.value;
+                                                                        if (!val.trim()) return;
+                                                                        const newTask = {
+                                                                            id: Date.now(),
+                                                                            title: val,
+                                                                            priority: 'Medium',
+                                                                            completed: false,
+                                                                            subtasks: [],
+                                                                            date: selectedDate
+                                                                        };
+                                                                        setTasks(prev => [newTask, ...prev]);
+                                                                        e.target.value = '';
+                                                                        showNotification(`Scheduled task on ${selectedDate}`);
+                                                                    }
+                                                                }}
+                                                            />
+                                                            <button 
+                                                                onClick={() => {
+                                                                    const el = document.getElementById('quick-task-input');
+                                                                    const val = el ? el.value : '';
+                                                                    if (!val.trim()) return;
+                                                                    const newTask = {
+                                                                        id: Date.now(),
+                                                                        title: val,
+                                                                        priority: 'Medium',
+                                                                        completed: false,
+                                                                        subtasks: [],
+                                                                        date: selectedDate
+                                                                    };
+                                                                    setTasks(prev => [newTask, ...prev]);
+                                                                    if (el) el.value = '';
+                                                                    showNotification(`Scheduled task on ${selectedDate}`);
+                                                                }}
+                                                                className="bg-purple-600 hover:bg-purple-500 rounded-lg px-3 text-xs font-bold text-white transition-all"
+                                                            >
+                                                                Schedule
+                                                            </button>
+                                                        </div>
+
+                                                        {/* Task Lists on Selected Date */}
+                                                        <div className="space-y-1.5">
+                                                            {activeTasksForSelectedDate.map(tk => (
+                                                                <div key={tk.id} className="flex items-center gap-2 p-2 rounded bg-white/5 text-xs text-gray-300">
+                                                                    <div className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+                                                                    <span className={tk.completed ? 'line-through text-gray-500' : ''}>{tk.title}</span>
+                                                                </div>
+                                                            ))}
+                                                            {activeTasksForSelectedDate.length === 0 && (
+                                                                <div className="text-center py-2 text-[10px] text-gray-500 italic">No schedules listed on this date. Use input to add.</div>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -774,7 +1705,7 @@
                                                             <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                                                                 <div className={`p-2.5 rounded-xl text-xs max-w-[85%] leading-relaxed ${msg.role === 'user' ? 'bg-blue-600 text-white font-medium' : 'bg-white/5 border border-white/5 text-gray-200'}`}>
                                                                     <div className="font-semibold text-[9px] text-gray-400 mb-1">
-                                                                        {msg.role === 'user' ? 'Ansh' : 'Anvab AI'}
+                                                                        {msg.role === 'user' ? (isLoggedIn ? user?.name : 'Ansh') : 'Anvab AI'}
                                                                     </div>
                                                                     <div className="whitespace-pre-line font-sans">{msg.text}</div>
                                                                 </div>
@@ -931,11 +1862,65 @@
                     </section>
 
                     {/* --- FOOTER --- */}
-                    <footer className="border-t border-white/5 py-12 text-center text-xs text-gray-500">
-                        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-6">
-                            <div className="font-medium text-gray-400">Your AI. Your OS. Your Life. 💜</div>
-                            <div>One platform. Infinite possibilities.</div>
-                            <div className="font-extrabold text-gray-300 tracking-widest text-[10px]">#AnvaabAIOS</div>
+                    <footer className="border-t border-white/5 bg-[#04040d] py-16 text-xs text-gray-500">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12 border-b border-white/5 pb-12">
+                                {/* Column 1: Brand Info */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                                            <Icons.Sparkles className="w-4 h-4 text-white" />
+                                        </div>
+                                        <span className="text-base font-bold text-white tracking-tight">Anvab AI OS</span>
+                                    </div>
+                                    <p className="text-gray-400 leading-relaxed max-w-sm">
+                                        One platform. Infinite possibilities. Helping you manage tasks, write notes, and plan your day with direct, sovereign context-aware AI.
+                                    </p>
+                                    <div className="text-gray-400 font-semibold tracking-wider text-[11px] uppercase">
+                                        Your AI. Your OS. Your Life. 💜
+                                    </div>
+                                </div>
+
+                                {/* Column 2: Platform Navigation */}
+                                <div className="space-y-4">
+                                    <h4 className="text-sm font-bold text-white uppercase tracking-wider">Navigation</h4>
+                                    <ul className="space-y-2.5 text-gray-400 font-medium">
+                                        <li><a href="#operating-system" className="hover:text-blue-400 transition-colors">Overview</a></li>
+                                        <li><a href="#mockup-dashboard" className="hover:text-purple-400 transition-colors">Live App Demo</a></li>
+                                        <li><a href="#features" className="hover:text-blue-400 transition-colors">OS Features</a></li>
+                                    </ul>
+                                </div>
+
+                                {/* Column 3: Contact & Social Links */}
+                                <div className="space-y-4">
+                                    <h4 className="text-sm font-bold text-white uppercase tracking-wider">Contact & Connect</h4>
+                                    <p className="text-gray-400">Get in touch with the creator, explore live project updates, or collaborate on GitHub.</p>
+                                    <div className="grid grid-cols-2 gap-3 pt-2">
+                                        <a href="mailto:asus219034@gmail.com" className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/5 text-gray-300 hover:text-blue-400 hover:border-blue-500/20 hover:bg-blue-950/20 transition-all">
+                                            <Icons.Mail className="w-4 h-4 text-blue-400" />
+                                            <span className="font-semibold text-xs">Email</span>
+                                        </a>
+                                        <a href="https://www.linkedin.com/in/ansh-shukla-7370a1377/?originalSubdomain=in" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/5 text-gray-300 hover:text-purple-400 hover:border-purple-500/20 hover:bg-purple-950/20 transition-all">
+                                            <Icons.Linkedin className="w-4 h-4 text-purple-400" />
+                                            <span className="font-semibold text-xs">LinkedIn</span>
+                                        </a>
+                                        <a href="https://github.com/anshkshukla" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/5 text-gray-300 hover:text-blue-400 hover:border-blue-500/20 hover:bg-blue-950/20 transition-all">
+                                            <Icons.Github className="w-4 h-4 text-slate-300" />
+                                            <span className="font-semibold text-xs">GitHub</span>
+                                        </a>
+                                        <a href="https://www.instagram.com/iansh18_/?hl=en" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/5 text-gray-300 hover:text-pink-400 hover:border-pink-500/20 hover:bg-pink-950/20 transition-all">
+                                            <Icons.Instagram className="w-4 h-4 text-pink-400" />
+                                            <span className="font-semibold text-xs">Instagram</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Bottom copyright alignment */}
+                            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-gray-500 font-medium">
+                                <div>&copy; {new Date().getFullYear()} Anvab AI OS. All rights reserved.</div>
+                                <div className="font-extrabold text-gray-400 tracking-widest text-[10px] uppercase">#AnvaabAIOS</div>
+                            </div>
                         </div>
                     </footer>
 
